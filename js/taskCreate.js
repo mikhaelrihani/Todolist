@@ -12,12 +12,11 @@ function displayCreateForm()
 {
     const dialogElement = document.querySelector(".modal-dialog");
     dialogElement.style.display = 'flex';
-    // dialogElement.classList.toggle('show');
+
     switchHeader();
 }
 
-async function handleTaskFormSubmit(event)
-{
+async function handleTaskFormSubmit(event){
     event.preventDefault();
     const formElement = event.currentTarget;
     const formData = new FormData(formElement);
@@ -25,14 +24,29 @@ async function handleTaskFormSubmit(event)
     const taskData = await createTaskFromApi({
         title: formTitle
     });
-    // Je mets a jour ma liste
+    const successMessage = document.querySelector('.message.success');
+    const errorMessage = document.querySelector('.message.danger');
+  
+    if(taskData) { 
+        successMessage.removeAttribute('hidden');
+        setTimeout(function() {
+            successMessage.setAttribute('hidden', true);
+        }, 2000);
+        errorMessage.setAttribute('hidden', true);
+         }else {
+            errorMessage.removeAttribute('hidden');
+            setTimeout(function() {
+                errorMessage.setAttribute('hidden', true);
+            }, 2000);
+            successMessage.setAttribute('hidden', true);
+        }
+   
     await resetTasks();
-    // Ci dessous la methode qui retire la modal de la page
     switchHeader();
     hideCreateForm();
 }
 
-// Ci dessous le parametre data est le JSON de ce que je veux envoyer
+
 async function createTaskFromApi(data)
 {
     const result = await fetch('http://localhost:8080/Todolist-back/public/api/tasks', {
